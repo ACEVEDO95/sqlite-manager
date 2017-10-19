@@ -1,0 +1,56 @@
+CREATE TABLE "clientes" (
+  "id" INTEGER CONSTRAINT "pk_clientes" PRIMARY KEY AUTOINCREMENT,
+  "nombre" TEXT NOT NULL,
+  "direccion" TEXT NOT NULL,
+  "telefono" SMALLINT
+);
+
+CREATE TABLE "compra" (
+  "fecha" DATE CONSTRAINT "pk_compra" PRIMARY KEY AUTOINCREMENT,
+  "detalle" TEXT NOT NULL
+);
+
+CREATE TABLE "venta" (
+  "id" INTEGER CONSTRAINT "pk_venta" PRIMARY KEY AUTOINCREMENT,
+  "producto" TEXT NOT NULL,
+  "cantidad" INTEGER,
+  "monto_pagado" REAL,
+  "saldo" REAL
+);
+
+CREATE TABLE "pedido" (
+  "id" INTEGER CONSTRAINT "pk_pedido" PRIMARY KEY AUTOINCREMENT,
+  "codigo_pedido" INTEGER NOT NULL REFERENCES "venta" ("id"),
+  "cliente" INTEGER NOT NULL REFERENCES "clientes" ("id"),
+  "fecha" TEXT NOT NULL,
+  "cantidad" TEXT NOT NULL,
+  "observaciones" TEXT NOT NULL
+);
+
+CREATE INDEX "idx_pedido__cliente" ON "pedido" ("cliente");
+
+CREATE INDEX "idx_pedido__codigo_pedido" ON "pedido" ("codigo_pedido");
+
+CREATE TABLE "productos" (
+  "id" INTEGER CONSTRAINT "pk_productos" PRIMARY KEY AUTOINCREMENT,
+  "codigo" INTEGER NOT NULL REFERENCES "pedido" ("id"),
+  "descripcion" TEXT NOT NULL,
+  "precio" REAL,
+  "stock" INTEGER,
+  "precio_comp" DATE NOT NULL REFERENCES "compra" ("fecha")
+);
+
+CREATE INDEX "idx_productos__codigo" ON "productos" ("codigo");
+
+CREATE INDEX "idx_productos__precio_comp" ON "productos" ("precio_comp");
+
+CREATE TABLE "proveedores" (
+  "id" INTEGER CONSTRAINT "pk_proveedores" PRIMARY KEY AUTOINCREMENT,
+  "codigo_prov" INTEGER NOT NULL REFERENCES "productos" ("id"),
+  "nombre" TEXT NOT NULL,
+  "direccion" TEXT NOT NULL,
+  "provincia" TEXT NOT NULL,
+  "telefono" SMALLINT
+);
+
+CREATE INDEX "idx_proveedores__codigo_prov" ON "proveedores" ("codigo_prov")
